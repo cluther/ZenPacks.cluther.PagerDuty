@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    >
+
+    <utility
+        provides="Products.ZenModel.interfaces.IAction"
+        factory=".actions.PagerDuty"
+        name="PagerDuty"
+        />
+
+    <adapter
+        provides=".actions.IPagerDutyContentInfo"
+        for="Products.ZenModel.NotificationSubscription.NotificationSubscription"
+        factory=".actions.PagerDutyContentInfo"
+        />
+
+    <browser:resourceDirectory
+        name="pagerduty"
+        directory="resources"
+        />
+
+    <browser:viewlet
+        name="js-pagerduty"
+        paths="/++resource++pagerduty/js/pagerduty.js"
+        weight="10"
+        manager="Products.ZenUI3.browser.interfaces.IJavaScriptSrcManager"
+        class="Products.ZenUI3.browser.javascript.JavaScriptSrcBundleViewlet"
+        permission="zope2.Public"
+        />
+
+</configure>
