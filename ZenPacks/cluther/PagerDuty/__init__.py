@@ -5,7 +5,7 @@ from Products.ZenModel.DataRoot import DataRoot
 from Products.ZenModel.UserSettings import UserSettingsManager
 from Products.ZenModel.ZenossInfo import ZenossInfo
 from Products.ZenModel.ZenPackManager import ZenPackManager
-from Products.ZenUtils.Utils import unused
+from Products.ZenUtils.Utils import monkeypatch, unused
 unused(Globals)
 
 
@@ -24,3 +24,25 @@ for klass in (DataRoot, UserSettingsManager, ZenossInfo, ZenPackManager):
         'action': action,
         'permissions': (ZEN_MANAGE_DMD,)
     },)
+
+
+@monkeypatch('Products.Zuul.facades.triggersfacade.TriggersFacade')
+def createNotification(self, id, action, *args, **kwargs):
+    '''
+    Return a notification given id, action and other arguments.
+
+    Post-processes default behavior to set different default
+    notification options depending on action.
+    '''
+
+    # original gets injected into locals by monkeypatch decorator.
+    notification = original(self, id, action, *args, **kwargs)
+
+    if notification.action == 'PagerDuty':
+        # notification.enabled = False
+        # notification.send_clear = False
+        # notification.delay_seconds = 0
+        # notification.repeat_seconds = 0
+        notification.send_initial_occurrence = False
+
+    return notification
