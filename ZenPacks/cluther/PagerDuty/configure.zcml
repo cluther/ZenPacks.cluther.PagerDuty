@@ -30,4 +30,21 @@
         permission="zope2.Public"
         />
 
+    <browser:page
+        name="pagerduty"
+        template="settings.pt"
+        for="*"
+        permission="zope2.Public"
+        />
+
+    <include package="Products.ZenUtils.extdirect.zope" file="meta.zcml"/>
+
+    <browser:directRouter
+        name="pagerduty_router"
+        for="*"
+        class=".api.PagerDutyRouter"
+        namespace="Zenoss.remote"
+        permission="zenoss.View"
+        />
+
 </configure>
