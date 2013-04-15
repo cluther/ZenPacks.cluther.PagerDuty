@@ -13,7 +13,7 @@ unused(Globals)
 # is so ugly because the settings page is still a Zenoss 2 "back-compat"
 # page.
 for klass in (DataRoot, UserSettingsManager, ZenossInfo, ZenPackManager):
-    action = '../dmd/pagerduty'
+    action = 'pagerduty'
     if klass == ZenPackManager:
         action = '../%s' % action
 
@@ -24,6 +24,22 @@ for klass in (DataRoot, UserSettingsManager, ZenossInfo, ZenPackManager):
         'action': action,
         'permissions': (ZEN_MANAGE_DMD,)
     },)
+
+
+@monkeypatch('Products.ZenUI3.navigation.menuitem.PrimaryNavigationMenuItem')
+def update(self):
+    '''
+    Update subviews for this PrimaryNavigationMenuItem.
+
+    Post-processes default behavior to add our subview. This allows the
+    secondary navigation bar to be rendered properly when the user is
+    looking at the PagerDuty settings screen.
+    '''
+    # original gets injected into locals by monkeypatch decorator.
+    original(self)
+
+    if '/zport/dmd/dataRootManage' in self.subviews:
+        self.subviews.append('/zport/dmd/pagerduty')
 
 
 @monkeypatch('Products.Zuul.facades.triggersfacade.TriggersFacade')
